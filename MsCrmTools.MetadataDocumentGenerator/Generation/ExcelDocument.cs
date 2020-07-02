@@ -234,6 +234,12 @@ namespace MsCrmTools.MetadataDocumentGenerator.Generation
             sheet.Column(y).PageBreak = true;
 
             AddAdditionalData(lineNumber, y, amd, sheet);
+            y++;
+
+            AddLookupTargetEntity(lineNumber, y, amd, sheet);
+            y++;
+
+            AddGlobalOptionSetName(lineNumber, y, amd, sheet);
         }
 
         /// <summary>
@@ -617,6 +623,84 @@ namespace MsCrmTools.MetadataDocumentGenerator.Generation
         }
 
         /// <summary>
+        /// Add Global Option Set Name for Picklist and MultiSelect Picklist fields
+        /// </summary>
+        /// <param name="x">Row number</param>
+        /// <param name="y">Cell number</param>
+        /// <param name="amd">Attribute metadata</param>
+        /// <param name="sheet">Worksheet where to write</param>
+        private void AddGlobalOptionSetName(int x, int y, AttributeMetadata amd, ExcelWorksheet sheet)
+        {
+            if (amd.AttributeType == null)
+                return;
+
+            switch (amd.AttributeType.Value)
+            {
+                case AttributeTypeCode.Virtual:
+                    if (amd is MultiSelectPicklistAttributeMetadata mspamd)
+                    {
+                        sheet.Cells[x, y].Value = (mspamd.OptionSet.IsGlobal.HasValue && mspamd.OptionSet.IsGlobal.Value)
+                                            ? mspamd.OptionSet.Name
+                                            : string.Empty;
+                    }
+                    break;
+                case AttributeTypeCode.Picklist:
+                    {
+                        PicklistAttributeMetadata pamd = (PicklistAttributeMetadata)amd;
+
+                        sheet.Cells[x, y].Value = (pamd.OptionSet.IsGlobal.HasValue && pamd.OptionSet.IsGlobal.Value)
+                                            ? pamd.OptionSet.Name
+                                            : string.Empty;
+                    }
+                    break;
+                default:
+                    {
+                        //do nothing
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Add Target Entity name(s) for Lookup, Customer and Owner Type of attributes
+        /// </summary>
+        /// <param name="x">Row number</param>
+        /// <param name="y">Cell number</param>
+        /// <param name="amd">Attribute metadata</param>
+        /// <param name="sheet">Worksheet where to write</param>
+        private void AddLookupTargetEntity(int x, int y, AttributeMetadata amd, ExcelWorksheet sheet)
+        {
+            if (amd.AttributeType == null)
+                return;
+
+            switch (amd.AttributeType.Value)
+            {
+                case AttributeTypeCode.Customer:
+                case AttributeTypeCode.Owner:
+                case AttributeTypeCode.Lookup:
+                    {
+                        var lamd = (LookupAttributeMetadata)amd;
+
+                        if (lamd.Targets.Length == 0)
+                            sheet.Cells[x, y].Value = string.Empty;
+                        else
+                        {
+                            var format = lamd.Targets.Length == 1
+                                         ? lamd.Targets[0]
+                                         : $"Multiple => {String.Join(";", lamd.Targets)}";
+                            sheet.Cells[x, y].Value = format;
+                        }
+                    }
+                    break;
+                default:
+                    {
+                        //do nothing
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>
         /// Adds attribute type specific metadata information
         /// </summary>
         /// <param name="x">Row number</param>
@@ -939,6 +1023,12 @@ namespace MsCrmTools.MetadataDocumentGenerator.Generation
             }
 
             sheet.Cells[x, y].Value = "Additional data";
+            y++;
+
+            sheet.Cells[x, y].Value = "Lookup Target Entity";
+            y++;
+
+            sheet.Cells[x, y].Value = "Global Option Set Name";
             y++;
 
             for (int i = 1; i <= y + 1; i++)
