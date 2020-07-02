@@ -64,6 +64,8 @@ namespace MsCrmTools.MetadataDocumentGenerator
 
         #region Properties
 
+        public bool AddLookupTargetEntity { get; set; }
+        public bool AddGlobalOptionSetName { get; set; }
         public bool AddAuditInformation { get; set; }
         public bool AddEntitiesSummary { get; set; }
         public bool AddFieldSecureInformation { get; set; }
@@ -123,7 +125,10 @@ namespace MsCrmTools.MetadataDocumentGenerator
                 FilePath = FilePath,
                 IncludeOnlyAttributesOnForms = IncludeOnlyAttributesOnForms,
                 AttributesSelection = AttributesSelection,
-                Prefixes = Prefixes
+                Prefixes = Prefixes,
+                AddFormLocation = AddFormLocation,
+                AddGlobalOptionSetName = AddGlobalOptionSetName,
+                AddLookupTargetEntity = AddLookupTargetEntity
             };
         }
 

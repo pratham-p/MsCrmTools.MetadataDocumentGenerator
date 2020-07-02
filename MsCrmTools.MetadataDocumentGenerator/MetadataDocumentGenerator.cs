@@ -486,6 +486,8 @@ namespace MsCrmTools.MetadataDocumentGenerator
             settings.AddValidForAdvancedFind = chkAddValidForAf.Checked;
             settings.AddFormLocation = chkAddFormLocation.Checked;
             settings.GenerateOnlyOneTable = chkOneSheet.Checked;
+            settings.AddGlobalOptionSetName = chkAddGlobalOptionSetName.Checked;
+            settings.AddLookupTargetEntity = chkAddLookupTargetEntity.Checked;
 
             settings.DisplayNamesLangugageCode = ((LanguageCode)cbbLcid.SelectedItem).Lcid;
             settings.FilePath = txtOutputFilePath.Text;

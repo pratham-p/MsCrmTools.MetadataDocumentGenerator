@@ -233,13 +233,19 @@ namespace MsCrmTools.MetadataDocumentGenerator.Generation
 
             sheet.Column(y).PageBreak = true;
 
+            if (settings.AddLookupTargetEntity)
+            {
+                AddLookupTargetEntity(lineNumber, y, amd, sheet);
+                y++;
+            }
+
+            if (settings.AddGlobalOptionSetName)
+            {
+                AddGlobalOptionSetName(lineNumber, y, amd, sheet);
+                y++;
+            }
+
             AddAdditionalData(lineNumber, y, amd, sheet);
-            y++;
-
-            AddLookupTargetEntity(lineNumber, y, amd, sheet);
-            y++;
-
-            AddGlobalOptionSetName(lineNumber, y, amd, sheet);
         }
 
         /// <summary>
@@ -639,18 +645,20 @@ namespace MsCrmTools.MetadataDocumentGenerator.Generation
                 case AttributeTypeCode.Virtual:
                     if (amd is MultiSelectPicklistAttributeMetadata mspamd)
                     {
-                        sheet.Cells[x, y].Value = (mspamd.OptionSet.IsGlobal.HasValue && mspamd.OptionSet.IsGlobal.Value)
-                                            ? mspamd.OptionSet.Name
-                                            : string.Empty;
+                        sheet.Cells[x, y].Value = (mspamd.OptionSet.IsGlobal.HasValue
+                                                    && mspamd.OptionSet.IsGlobal.Value == true)
+                                                   ? mspamd.OptionSet.Name
+                                                   : string.Empty;
                     }
                     break;
                 case AttributeTypeCode.Picklist:
                     {
                         PicklistAttributeMetadata pamd = (PicklistAttributeMetadata)amd;
 
-                        sheet.Cells[x, y].Value = (pamd.OptionSet.IsGlobal.HasValue && pamd.OptionSet.IsGlobal.Value)
-                                            ? pamd.OptionSet.Name
-                                            : string.Empty;
+                        sheet.Cells[x, y].Value = (pamd.OptionSet.IsGlobal.HasValue
+                                                    && pamd.OptionSet.IsGlobal.Value)
+                                                   ? pamd.OptionSet.Name
+                                                   : string.Empty;
                     }
                     break;
                 default:
@@ -1022,13 +1030,19 @@ namespace MsCrmTools.MetadataDocumentGenerator.Generation
                 y++;
             }
 
+            if (settings.AddLookupTargetEntity)
+            {
+                sheet.Cells[x, y].Value = "Lookup Target Entity";
+                y++;
+            }
+
+            if (settings.AddGlobalOptionSetName)
+            {
+                sheet.Cells[x, y].Value = "Global Option Set Name";
+                y++;
+            }
+
             sheet.Cells[x, y].Value = "Additional data";
-            y++;
-
-            sheet.Cells[x, y].Value = "Lookup Target Entity";
-            y++;
-
-            sheet.Cells[x, y].Value = "Global Option Set Name";
             y++;
 
             for (int i = 1; i <= y + 1; i++)
